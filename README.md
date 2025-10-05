@@ -1,10 +1,26 @@
-
 # 🌌 Sky Spy: AI for Exoplanet Discovery  
+
+![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python)  
+![Machine Learning](https://img.shields.io/badge/Machine%20Learning-XGBoost-orange?logo=scikitlearn)  
+![NASA Space Apps](https://img.shields.io/badge/NASA-Space%20Apps%20Challenge-black?logo=nasa)  
+![Status](https://img.shields.io/badge/Status-Prototype-green)  
 
 > *“When the sky is full of stars… which ones hide new worlds?”*  
 
 Sky Spy is an AI-powered tool built by **Team Exo Explorers** for the **NASA Space Apps Challenge**.  
 Our mission? To use **machine learning** and **open NASA data** to uncover the hidden planets orbiting distant stars — faster, smarter, and more transparently than ever before.  
+
+---
+
+## 📖 Table of Contents  
+- [✨ Why Sky Spy?](#-why-sky-spy)  
+- [🛰️ The Challenge We Tackled](#️-the-challenge-we-tackled)  
+- [🧩 How It Works](#-how-it-works)  
+- [🌍 Features](#-features)  
+- [🚀 Future Directions](#-future-directions)  
+- [👩‍🚀 Team Exo Explorers](#-team-exo-explorers)  
+- [🖼️ Screenshots & Demo](#️-screenshots--demo)  
+- [⚙️ How to Run](#️-how-to-run)  
 
 ---
 
@@ -80,4 +96,50 @@ We’re dreamers, coders, and space nerds who believe discovery should be:
 - Transparent 🔍  
 - Accessible 🌍  
 
-Sky Spy isn’t just a project. It’s our telescope into the unknown.  
+### 👩‍🚀 Team Members  
+- **Hany** — Team Leader  
+- **Rania** — Data Preprocessing & Modelling  
+- **Tasneem** — Training & Evaluation  
+- **Mriam** — Visualization & Web  
+- **Mariam** — Presentation & Design  
+
+---
+
+## 🖼️ Screenshots & Demo  
+📌 *(Add screenshots or demo GIFs here once ready — e.g., web demo UI, visualizations, or accuracy charts)*  
+
+---
+
+## ⚙️ How to Run  
+
+### 🔧 Requirements  
+- Python 3.9+  
+- pip  
+
+### 📦 Installation  
+Clone the repo and install dependencies:  
+
+```bash
+git clone https://github.com/yourusername/sky-spy.git
+cd sky-spy
+pip install -r requirements.txt
+```
+
+### ▶️ Run the Project  
+For training and evaluation:  
+
+```bash
+python train_model.py
+```
+
+For visualization dashboard (Streamlit):  
+
+```bash
+streamlit run app.py
+```
+
+Then open: **http://localhost:8501/**  
+
+---
+
+🌌 *Sky Spy isn’t just a project. It’s our telescope into the unknown.*  

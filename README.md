@@ -112,9 +112,17 @@ We’re dreamers, coders, and space nerds who believe discovery should be:
 
 ## ⚙️ How to Run  
 
-### 🔧 Requirements  
-- Python 3.9+  
-- pip  
+### 🔧 Requirements used in this project 
+- Python==3.13
+- pi==25.2
+- numpy==1.24.4
+- pandas==1.5.3
+- scikit-learn==1.2.2
+- xgboost==1.7.6
+- matplotlib==3.7.1
+- seaborn==0.12.2
+- streamlit==1.27.2
+- requests==2.31.0
 
 ### 📦 Installation  
 Clone the repo and install dependencies:  

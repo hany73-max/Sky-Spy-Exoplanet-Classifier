@@ -1,132 +1,83 @@
-# 🌌✨ Exo Explorers – *A World Away* ✨🌌  
 
-![Exoplanet Banner](https://www.nasa.gov/wp-content/uploads/2023/05/exoplanet_banner.jpg)  
+# 🌌 Sky Spy: AI for Exoplanet Discovery  
 
-<div align="center">
+> *“When the sky is full of stars… which ones hide new worlds?”*  
 
-🛰️ *Exploring distant worlds with the power of AI* 🛰️  
-
-[![Made with Python](https://img.shields.io/badge/Made%20with-Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)  
-[![XGBoost](https://img.shields.io/badge/Model-XGBoost-EB5E28?logo=python&logoColor=white)](https://xgboost.ai/)  
-[![NASA Data](https://img.shields.io/badge/Data-NASA-blue?logo=nasa&logoColor=white)](https://exoplanetarchive.ipac.caltech.edu/)  
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)  
-
-</div>
+Sky Spy is an AI-powered tool built by **Team Exo Explorers** for the **NASA Space Apps Challenge**.  
+Our mission? To use **machine learning** and **open NASA data** to uncover the hidden planets orbiting distant stars — faster, smarter, and more transparently than ever before.  
 
 ---
 
-## 🚀 Project Overview  
-We are **Exo Explorers**, tackling NASA’s **A World Away Challenge**.  
-Our mission: use **Artificial Intelligence & Machine Learning** to detect **exoplanets** from NASA’s **Kepler** and **TESS** datasets.  
-
-💡 Why? Because somewhere out there, another Earth could be waiting. 🌍✨  
-
----
-
-## 🎯 Challenge Addressed  
-> **Create an AI/ML model trained on NASA’s open-source exoplanet datasets that can analyze new data to identify exoplanets.**  
-
-**Why it matters:**  
-- 🌠 Exoplanet discovery helps us explore life beyond Earth  
-- ⏱️ Manual classification = slow & error-prone  
-- 🤖 AI scales the search & accelerates discovery  
+## ✨ Why Sky Spy?  
+- NASA missions like **Kepler** and **TESS** have given us **oceans of data**.  
+- Thousands of exoplanets were discovered, but most detections were done **manually** — slow, noisy, and error-prone.  
+- With AI, we can:  
+  - Detect exoplanets **automatically**  
+  - Handle **noisy, imbalanced datasets**  
+  - Give **transparent visualizations** that even non-experts can understand  
 
 ---
 
-## 🛠️ Approach  
+## 🛰️ The Challenge We Tackled  
+> **A World Away** — analyzing massive exoplanet datasets to identify new planets using AI/ML.  
 
-### 1️⃣ Data Selection  
-- Used **Kepler** + **TESS** datasets  
-- Combined for more features + bigger sample size  
-
-### 2️⃣ Data Preprocessing  
-- 🧹 Cleaned noisy values  
-- 🕳️ Fixed missing data  
-- ⚖️ Balanced the classes  
-- ✂️ Split into Train/Test  
-
-### 3️⃣ Modeling  
-- 🔬 Tested **13 ML models**  
-- 📈 Accuracy range: *85–93%*  
-- 🏆 Best: **XGBClassifier (~90%)**  
-
-**Why XGB?**  
-- ✔ Handles noisy & imbalanced data  
-- ✔ Boosting reduces errors step-by-step  
-- ✔ Outperformed other models in consistency  
-
-### 4️⃣ Prediction  
-- Trained on **Confirmed + False Positives**  
-- Predicted on **Candidate exoplanets**  
-- ✅ Detected possible new worlds! 🌍🪐  
+Our goal was to train a model on open NASA datasets and make it:  
+- Accurate  
+- Transparent  
+- Interactive  
 
 ---
 
-## 📊 Results & Visualization  
+## 🧩 How It Works  
 
-| Metric        | Score  |
-|---------------|--------|
-| Accuracy      | ~90%   |
-| Precision     | High   |
-| Recall        | Strong |
-| F1-Score      | Balanced |
+### 1. **Datasets & Preprocessing**  
+- Sources: **Kepler** + **TESS**  
+- Cleaning: removed noise, filled missing values, dropped irrelevant columns  
+- Split into **training/testing** sets  
 
-🔭 Visualizations included:  
-- Exoplanet class distributions  
-- Confusion matrices  
-- Model performance plots  
-- Candidate prediction outcomes  
+### 2. **Modelling**  
+- Tested **13+ models** (Random Forest, Gradient Boosting, etc.)  
+- Winner: **XGBoost Classifier** 🚀  
+- Why? It builds multiple decision trees, learns from mistakes, and thrives in **noisy NASA data**  
 
----
+### 3. **Results**  
+- Accuracy: **~90%**  
+- Detected > **90% of confirmed exoplanets**  
+- Confidence score: **97%**  
 
-## 🌍 Impact & Future Work  
-- ⚡ Automates exoplanet detection  
-- 🧠 Reduces time for astronomers  
-- 🌌 Future: connect with **real-time telescope data**  
-- 🔮 Potential to classify other cosmic objects  
+### 4. **Visualization**  
+Because numbers alone are boring…  
+- Scatter plots: planet radius vs star mass  
+- Correlation heatmaps: which features matter most  
+- Feature importance: why the AI makes decisions  
 
----
-
-## 👨‍🚀 Team – Exo Explorers  
-
-- 🪐 [Your Name 1] – Data Preprocessing & Cleaning  
-- 🚀 [Your Name 2] – Modeling & AI Development  
-- 🌠 [Your Name 3] – Visualization & Dashboards  
-- 🌌 [Your Name 4] – Presentation & Storytelling  
+### 5. **Web Demo**  
+- Users input planet data (mass, radius, distance)  
+- Output: **Confirmed / Candidate / False Positive**  
+- Instant visual explanation for transparency  
 
 ---
 
-## 📂 Repo Structure  
-
-├── data/ # Cleaned & raw datasets
-├── notebooks/ # Jupyter notebooks
-├── models/ # Saved models (XGB, etc.)
-├── visualization/ # Graphs & charts
-├── presentation/ # Slides + Demo video
-└── README.md # Documentation
-
+## 🌍 Features  
+✔️ Handles messy real-world datasets  
+✔️ Delivers predictions with **confidence + reasons**  
+✔️ Transparent **visual storytelling** for users  
+✔️ Interactive web demo anyone can try  
 
 ---
 
-## ⚙️ Tech Stack  
-
-- 🐍 Python  
-- 📊 Pandas, NumPy, Matplotlib, Seaborn  
-- 🤖 Scikit-learn, XGBoost  
-- 🌌 NASA Kepler & TESS datasets  
-- 📓 Jupyter Notebooks  
-- 📺 Streamlit for dashboard  
+## 🚀 Future Directions  
+- Link with **real-time NASA updates** for continuous learning  
+- Add **3D visualizations** of planetary orbits in PowerPoint-style or WebGL  
+- Expand classification to stars, moons, or even **rogue planets**  
+- Turn Sky Spy into a full **public exploration tool** for space enthusiasts  
 
 ---
 
-## 📜 License  
-This project uses **NASA’s Open Data**  
-Licensed under [MIT License](LICENSE).  
+## 👩‍🚀 Team Exo Explorers  
+We’re dreamers, coders, and space nerds who believe discovery should be:  
+- Fast ⚡  
+- Transparent 🔍  
+- Accessible 🌍  
 
----
-
-<div align="center">
-
-🌠 *"We are explorers, turning data into discovery."* 🌠  
-
-</div>
+Sky Spy isn’t just a project. It’s our telescope into the unknown.  

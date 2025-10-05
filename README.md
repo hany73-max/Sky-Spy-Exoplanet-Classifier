@@ -105,11 +105,6 @@ We’re dreamers, coders, and space nerds who believe discovery should be:
 
 ---
 
-## 🖼️ Screenshots & Demo  
-📌 *(Add screenshots or demo GIFs here once ready — e.g., web demo UI, visualizations, or accuracy charts)*  
-
----
-
 ## ⚙️ How to Run  
 
 ### 🔧 Requirements used in this project 

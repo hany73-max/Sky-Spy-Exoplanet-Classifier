@@ -19,7 +19,6 @@ Our mission? To use **machine learning** and **open NASA data** to uncover the h
 - [🌍 Features](#-features)  
 - [🚀 Future Directions](#-future-directions)  
 - [👩‍🚀 Team Exo Explorers](#-team-exo-explorers)  
-- [🖼️ Screenshots & Demo](#️-screenshots--demo)  
 - [⚙️ How to Run](#️-how-to-run)  
 
 ---

@@ -4,6 +4,8 @@ import requests
 import base64
 import random
 from streamlit_lottie import st_lottie
+from pathlib import Path
+ASSETS_DIR = Path(__file__).resolve().parent / "assets"
 
 # Function to load Lottie animations
 def load_lottieurl(url: str):
@@ -26,7 +28,7 @@ def run():
 
     # Assets
     nasa_logo = "https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg"
-    background_img_base64 = get_base64_of_bin_file("background.jpg")
+    background_img_base64 = get_base64_of_bin_file(ASSETS_DIR/"background.jpg")
 
     # ===== Animated Starfield Background =====
     star_count = 140

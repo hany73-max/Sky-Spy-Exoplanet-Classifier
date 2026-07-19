@@ -5,6 +5,8 @@ import pages.DataExploration as DataExploration
 import pages.ModelPerformance as ModelPerformance
 import base64
 import os
+from pathlib import Path
+ASSETS_DIR = Path(__file__).resolve().parent / "assets"
 
 # App Config
 st.set_page_config(
@@ -20,7 +22,7 @@ def get_base64_of_file(file_path):
         return base64.b64encode(f.read()).decode()
 
 # Files (update names if different)
-image_file = "sidebar_bg.jpg"              
+image_file = ASSETS_DIR/"sidebar_bg.jpg"              
 
 # quick existence checks (helps debugging)
 if not os.path.exists(image_file):
@@ -67,7 +69,7 @@ st.markdown(
 
 # Sidebar UI + single toggle button
 with st.sidebar:
-    st.image("logo.jpg", width=160)
+    st.image(ASSETS_DIR/ "logo.jpg", width=160)
     st.markdown("""
     ## Sky Spy  
     Classifying candidate exoplanets as **Confirmed** or **False Positive** using ML.

@@ -1,1 +1,0 @@
- <audio id="bg-music" autoplay loop controls>

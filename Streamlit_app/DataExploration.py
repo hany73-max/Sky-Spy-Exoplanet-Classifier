@@ -101,7 +101,7 @@ def run():
     st.subheader("Feature Importance")
     importances = model.named_steps['clf'].feature_importances_
     fig = px.bar(x=importances, y=features, orientation='h',
-                 title="Feature Importance - Gradient Boosting",
+                 title="Feature Importance - XGBclassifier",
                  labels={"x":"Importance", "y":"Feature"},
                  color=importances, color_continuous_scale="magma")
     st.plotly_chart(fig, use_container_width=True)

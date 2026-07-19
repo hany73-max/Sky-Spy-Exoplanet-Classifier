@@ -1,6 +1,6 @@
 import streamlit as st
 import pages.Home as Home
-import src.Prediction as Prediction
+import pages.Prediction as Prediction
 import pages.DataExploration as DataExploration
 import pages.ModelPerformance as ModelPerformance
 import base64

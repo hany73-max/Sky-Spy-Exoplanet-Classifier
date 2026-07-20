@@ -1,7 +1,24 @@
 import streamlit as st
 import pandas as pd
-from cache_utils import get_model
+import requests
+import os
 import random
+from cache_utils import get_model
+
+API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000").rstrip("/")
+
+
+def predict_via_api(row: dict) -> dict:
+    """Single-candidate path — this is the one that actually calls api.py."""
+    response = requests.post(f"{API_URL}/predict", json=row)
+    if not response.ok:
+        try:
+            detail = response.json().get("detail", response.text)
+        except ValueError:
+            detail = response.text
+        raise RuntimeError(f"API error ({response.status_code}): {detail}")
+    return response.json()
+
 
 def run():
     # ===== Animated Starfield Background =====
@@ -27,40 +44,12 @@ def run():
     st.markdown(
         f"""
         <style>
-        .stApp {{
-            position: relative;
-            background: transparent;
-        }}
-        #starfield {{
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }}
-        .star {{
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 6px rgba(255,255,255,0.9);
-            opacity: 0.85;
-        }}
-        @keyframes twinkle {{
-            0% {{ opacity: 0.15; }}
-            50% {{ opacity: 1; }}
-            100% {{ opacity: 0.15; }}
-        }}
-        @keyframes drift {{
-            0% {{ transform: translateY(0px); }}
-            50% {{ transform: translateY(-10px); }}
-            100% {{ transform: translateY(0px); }}
-        }}
-        .stApp > div {{
-            position: relative;
-            z-index: 2;
-        }}
+        .stApp {{ position: relative; background: transparent; }}
+        #starfield {{ position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }}
+        .star {{ position: absolute; background: white; border-radius: 50%; box-shadow: 0 0 6px rgba(255,255,255,0.9); opacity: 0.85; }}
+        @keyframes twinkle {{ 0% {{ opacity: 0.15; }} 50% {{ opacity: 1; }} 100% {{ opacity: 0.15; }} }}
+        @keyframes drift {{ 0% {{ transform: translateY(0px); }} 50% {{ transform: translateY(-10px); }} 100% {{ transform: translateY(0px); }} }}
+        .stApp > div {{ position: relative; z-index: 2; }}
         </style>
         <div id="starfield">{stars_html}</div>
         """,
@@ -69,10 +58,11 @@ def run():
 
     st.title("🚀 Exoplanet Prediction")
 
-    # --- Load model and metadata ---
+    # CSV batch path still loads the model locally — sending hundreds of
+    # rows through the API one at a time would be slow, same reasoning
+    # as kessler-shield's batch tab.
     model, le, features, df, (X_test, y_test) = get_model()
 
-    # --- Selection: Manual or CSV Upload ---
     st.subheader("Choose Input Method")
     input_method = st.radio("Select how to provide data:", ["Manual Entry", "Upload CSV"])
 
@@ -92,40 +82,48 @@ def run():
             st.dataframe(input_df.head())
             input_df = input_df[features]
 
-    # --- Prediction Button ---
     if st.button("Predict"):
         if input_df is None:
             st.warning("Please enter data or upload a valid CSV file.")
+
+        elif input_method == "Manual Entry":
+            # Single candidate — goes through the API
+            try:
+                result = predict_via_api(user_input)
+            except requests.exceptions.ConnectionError:
+                st.error(
+                    "Couldn't reach the API. Make sure it's running:\n\n"
+                    "`uvicorn api:app --reload`"
+                )
+                st.stop()
+            except Exception as e:
+                st.error(f"Prediction failed.\n\nDetails: {e}")
+                st.stop()
+
+            st.subheader("📊 Prediction Report")
+            st.success(f"### Prediction: {result['prediction']}")
+            st.write(f"Confidence: {result['confidence']:.2%}")
+
         else:
+            # CSV batch — stays local, same model/le already loaded above
             preds = model.predict(input_df)
             labels = le.inverse_transform(preds)
             probas = model.predict_proba(input_df)
 
-            if input_method == "Manual Entry":
-                # Detailed report only for manual input
-                st.subheader("📊 Prediction Report")
-                st.success(f"### Prediction: {labels[0]}")
-                st.write(f"Confidence: {probas.max():.2%}")
+            st.subheader("✅ Predictions Completed")
+            st.write(f"Predictions generated for {len(input_df)} candidates.")
 
-            else:
-                # Show dataframe with predictions for CSV uploads
-                st.subheader("✅ Predictions Completed")
-                st.write(f"Predictions generated for {len(input_df)} candidates.")
+            results_df = input_df.copy()
+            results_df["Prediction"] = labels
+            results_df["Confidence"] = probas.max(axis=1)
 
-                # Add prediction + confidence columns
-                results_df = input_df.copy()
-                results_df["Prediction"] = labels
-                results_df["Confidence"] = probas.max(axis=1)
+            st.write("### Results with Predictions")
+            st.dataframe(results_df)
 
-                # Show dataframe in app
-                st.write("### Results with Predictions")
-                st.dataframe(results_df)
-
-                # Download option
-                csv = results_df.to_csv(index=False).encode("utf-8")
-                st.download_button(
-                    label="📥 Download Predictions as CSV",
-                    data=csv,
-                    file_name="exoplanet_predictions.csv",
-                    mime="text/csv",
-                )
+            csv = results_df.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                label="📥 Download Predictions as CSV",
+                data=csv,
+                file_name="exoplanet_predictions.csv",
+                mime="text/csv",
+            )

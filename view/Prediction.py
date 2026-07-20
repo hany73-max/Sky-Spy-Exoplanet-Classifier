@@ -5,7 +5,7 @@ import os
 import random
 from cache_utils import get_model
 
-API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000").rstrip("/")
+API_URL = os.environ.get("API_URL", "https://sky-spy-exoplanet-classifier-production.up.railway.app/").rstrip("/")
 
 
 def predict_via_api(row: dict) -> dict:

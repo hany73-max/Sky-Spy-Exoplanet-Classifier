@@ -1,8 +1,8 @@
 import streamlit as st
-import pages.Home as Home
-import pages.Prediction as Prediction
-import pages.DataExploration as DataExploration
-import pages.ModelPerformance as ModelPerformance
+import view.Home as Home
+import view.Prediction as Prediction
+import view.DataExploration as DataExploration
+import view.ModelPerformance as ModelPerformance
 import base64
 import os
 from pathlib import Path

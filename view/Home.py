@@ -5,7 +5,7 @@ import base64
 import random
 from streamlit_lottie import st_lottie
 from pathlib import Path
-ASSETS_DIR = Path(__file__).resolve().parent / "assets"
+ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
 
 # Function to load Lottie animations
 def load_lottieurl(url: str):

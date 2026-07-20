@@ -1,7 +1,8 @@
 # cache_utils.py
 import streamlit as st
-from src.model_utils import train_model
 from pathlib import Path
+from src.model_utils import train_model
+
 DATA_DIR = Path(__file__).resolve().parent / "data"
 
 

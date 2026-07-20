@@ -1,4 +1,6 @@
 import os, csv
+from pathlib import Path
+import joblib
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import GridSearchCV, train_test_split
@@ -15,6 +17,10 @@ features = [
 ]
 target = "koi_disposition"
 
+MODELS_DIR = Path(__file__).resolve().parent.parent / "models"
+MODEL_PATH = MODELS_DIR / "champion_model.pkl"
+ENCODER_PATH = MODELS_DIR / "label_encoder.pkl"
+
 
 # ================== LOAD DATA ==================
 def load_data(filepath):
@@ -27,60 +33,8 @@ def load_data(filepath):
     return df
 
 
-# ================== TRAIN MODEL ==================
-@st.cache_data
-def train_model(filepath_1, filepath_2=None):
-    # Load datasets
-    dataset_1 = load_data(filepath_1)
-    if filepath_2:
-        dataset_2 = load_data(filepath_2)
-        df = pd.concat([dataset_1, dataset_2], ignore_index=True)
-    else:
-        df = dataset_1.copy()
-
-    df.reset_index(drop=True, inplace=True)
-
-    # Keep relevant cols
-    df = df[features + [target]]
-    df = df[df[target].isin(['CONFIRMED', 'FALSE POSITIVE'])]
-
-    # Clean missing values
-    df = df.dropna(subset=[target])
-    df[features] = df[features].fillna(df[features].median())
-
-    # Encode target
-    le = LabelEncoder()
-    df[target] = le.fit_transform(df[target])
-
-    # Split
-    X_train, X_test, y_train, y_test = train_test_split(
-        df[features], df[target], test_size=0.2, random_state=42
-    )
-
-    # ----------------- MODEL RUNNER -----------------
-    def run_model(X_train, X_test, y_train, y_test,
-                  estimator=None, grid_search=False,
-                  grid_params=None, cv=None,
-                  scoring="balanced_accuracy"):
-
-        steps = [('clf', estimator)]
-        pipe = Pipeline(steps=steps)
-
-        if grid_search:
-            model = GridSearchCV(
-                pipe, param_grid=grid_params, cv=cv,
-                scoring=scoring, n_jobs=-1
-            )
-        else:
-            model = pipe
-
-        with parallel_backend('threading', n_jobs=-1):
-            model.fit(X_train, y_train)
-
-        y_pred = model.predict(X_test)
-        return model, y_pred
-
-    # ----------------- TRAINING -----------------
+# ================== GRID SEARCH (only runs when no cached model exists) ==
+def _run_grid_search(X_train, y_train):
     params = {
         'clf__n_estimators': [800],
         "clf__learning_rate": [0.15],
@@ -93,29 +47,67 @@ def train_model(filepath_1, filepath_2=None):
         "clf__reg_lambda": [1.0]
     }
 
-    model, y_pred = run_model(
-        X_train, X_test, y_train, y_test,
-        estimator=XGBClassifier(
-            random_state=42,
-            eval_metric="logloss"
-        ),
-        grid_search=True,
-        grid_params=params,
-        cv=5,
-        scoring="balanced_accuracy"
+    pipe = Pipeline(steps=[(
+        'clf', XGBClassifier(random_state=42, eval_metric="logloss")
+    )])
+
+    model = GridSearchCV(
+        pipe, param_grid=params, cv=5,
+        scoring="balanced_accuracy", n_jobs=-1
     )
 
-    best_model = model.best_estimator_ if hasattr(model, "best_estimator_") else model
+    with parallel_backend('threading', n_jobs=-1):
+        model.fit(X_train, y_train)
 
-    # ----------------- REPORT -----------------
-    print("\n📊 Best Params:", getattr(model, "best_params_", {}))
-    print("\n📊 Classification Report:\n", classification_report(y_test, y_pred, target_names=le.classes_))
-    print("\n📊 Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+    return model
+
+
+# ================== TRAIN OR LOAD MODEL ==================
+@st.cache_data
+def train_model(filepath_1, filepath_2=None):
+    # --- Load + clean data (cheap, always runs) ---
+    dataset_1 = load_data(filepath_1)
+    if filepath_2:
+        dataset_2 = load_data(filepath_2)
+        df = pd.concat([dataset_1, dataset_2], ignore_index=True)
+    else:
+        df = dataset_1.copy()
+
+    df.reset_index(drop=True, inplace=True)
+    df = df[features + [target]]
+    df = df[df[target].isin(['CONFIRMED', 'FALSE POSITIVE'])]
+    df = df.dropna(subset=[target])
+    df[features] = df[features].fillna(df[features].median())
+
+    cache_exists = MODEL_PATH.exists() and ENCODER_PATH.exists()
+
+    if cache_exists:
+        # --- Fast path: load the already-trained model + the exact
+        # label encoder it was trained with, skip GridSearchCV entirely ---
+        best_model = joblib.load(MODEL_PATH)
+        le = joblib.load(ENCODER_PATH)
+        df[target] = le.transform(df[target])
+    else:
+        # --- Slow path: only runs once, then gets committed to the repo ---
+        le = LabelEncoder()
+        df[target] = le.fit_transform(df[target])
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        df[features], df[target], test_size=0.2, random_state=42
+    )
+
+    if not cache_exists:
+        model = _run_grid_search(X_train, y_train)
+        best_model = model.best_estimator_ if hasattr(model, "best_estimator_") else model
+
+        y_pred = best_model.predict(X_test)
+        print("\n📊 Best Params:", getattr(model, "best_params_", {}))
+        print("\n📊 Classification Report:\n", classification_report(y_test, y_pred, target_names=le.classes_))
+        print("\n📊 Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+
+        MODELS_DIR.mkdir(parents=True, exist_ok=True)
+        joblib.dump(best_model, MODEL_PATH)
+        joblib.dump(le, ENCODER_PATH)
+        print(f"✅ Saved trained model to {MODEL_PATH}")
 
     return best_model, le, features, df, (X_test, y_test)
-
-
-# ================== GET MODEL WRAPPER ==================
-def get_model():
-    """Wrapper to call in Streamlit app. Adjust file paths if needed."""
-    return train_model("exoplanets data_Set.csv", "exoplanets data_set 2.csv")
